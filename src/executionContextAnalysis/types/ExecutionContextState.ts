@@ -1,5 +1,5 @@
-import { PrimitiveMemberExpression } from "./PrimitiveMemberExpression";
-import { StringsEncryptFunction } from "./StringsEncryptFunction";
+import { PrimitiveMemberExpression } from './PrimitiveMemberExpression';
+import { StringsEncryptFunction } from './StringsEncryptFunction';
 
 export type ExecutionContextState = {
   globalMemberExpressionsPrimitives: Set<PrimitiveMemberExpression>;

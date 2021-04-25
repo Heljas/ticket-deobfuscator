@@ -1,7 +1,7 @@
-import nodeCrypto from "crypto";
-import { JSDOM, DOMWindow } from "jsdom";
-import fs from "fs";
-import { Script } from "vm";
+import nodeCrypto from 'crypto';
+import { JSDOM, DOMWindow } from 'jsdom';
+import fs from 'fs';
+import { Script } from 'vm';
 
 export class Evaluator {
   private window: DOMWindow;
@@ -9,10 +9,10 @@ export class Evaluator {
 
   public constructor(filePath: string) {
     const dom = new JSDOM(``, {
-      url: "https://www.supremenewyork.com/mobile",
-      referrer: "https://www.supremenewyork.com/mobile",
-      contentType: "text/html",
-      runScripts: "outside-only",
+      url: 'https://www.supremenewyork.com/mobile',
+      referrer: 'https://www.supremenewyork.com/mobile',
+      contentType: 'text/html',
+      runScripts: 'outside-only',
     });
 
     (dom.window as any).crypto = {
@@ -22,9 +22,9 @@ export class Evaluator {
     this.scriptPath = filePath;
 
     const originalCode = fs.readFileSync(this.scriptPath, {
-      encoding: "utf-8",
+      encoding: 'utf-8',
     });
-    const nodePreload = "const module = {};const require = () => class T {};";
+    const nodePreload = 'const module = {};const require = () => class T {};';
     const script = new Script(nodePreload + originalCode);
     const vmContext = dom.getInternalVMContext();
     script.runInContext(vmContext);
@@ -32,15 +32,7 @@ export class Evaluator {
 
   public run = <T>(
     code: string,
-    expectedType:
-      | "string"
-      | "number"
-      | "bigint"
-      | "boolean"
-      | "symbol"
-      | "undefined"
-      | "object"
-      | "function"
+    expectedType: 'string' | 'number' | 'bigint' | 'boolean' | 'symbol' | 'undefined' | 'object' | 'function',
   ): T | undefined => {
     try {
       const result = this.window.eval(code) as unknown;

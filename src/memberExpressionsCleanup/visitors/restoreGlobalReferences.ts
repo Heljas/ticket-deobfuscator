@@ -1,17 +1,9 @@
-import { NodePath, Visitor } from "@babel/traverse";
-import {
-  isIdentifier,
-  isVariableDeclaration,
-  isVariableDeclarator,
-  VariableDeclaration,
-} from "@babel/types";
-import { GlobalState } from "../../GlobalState";
+import { NodePath, Visitor } from '@babel/traverse';
+import { isIdentifier, isVariableDeclaration, isVariableDeclarator, VariableDeclaration } from '@babel/types';
+import { GlobalState } from '../../GlobalState';
 
 export const RESTORE_GLOBAL_REFERENCES: Visitor = {
-  VariableDeclaration: function (
-    path: NodePath<VariableDeclaration>,
-    state: GlobalState
-  ) {
+  VariableDeclaration: function (path: NodePath<VariableDeclaration>, state: GlobalState) {
     if (!isVariableDeclarator(path.node.declarations[0])) return;
     const declarator = path.node.declarations[0];
     if (!isIdentifier(declarator.id)) return;
@@ -27,7 +19,7 @@ export const RESTORE_GLOBAL_REFERENCES: Visitor = {
           path.node.object.name = this.globalName;
         },
       },
-      { orgName: declarator.id.name, globalName: declarator.init.name }
+      { orgName: declarator.id.name, globalName: declarator.init.name },
     );
     path.remove();
   },

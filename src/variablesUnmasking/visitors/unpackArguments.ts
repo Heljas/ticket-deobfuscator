@@ -1,29 +1,26 @@
-import { NodePath, Visitor } from "@babel/traverse";
-import { identifier, MemberExpression } from "@babel/types";
-import { getMaskedVariableIndex } from "../getMaskedVariableIndex";
-import { VariablesMaskingState } from "../types/VariablesMaskingState";
+import { NodePath, Visitor } from '@babel/traverse';
+import { identifier, MemberExpression } from '@babel/types';
+import { getMaskedVariableIndex } from '../getMaskedVariableIndex';
+import { VariablesMaskingState } from '../types/VariablesMaskingState';
 
 export const UNPACK_ARGUMENTS: Visitor = {
-  MemberExpression: function (
-    path: NodePath<MemberExpression>,
-    state: VariablesMaskingState
-  ) {
-    const object = path.get("object") as NodePath;
+  MemberExpression: function (path: NodePath<MemberExpression>, state: VariablesMaskingState) {
+    const object = path.get('object') as NodePath;
     if (!object.isMemberExpression()) return;
     const memberIndex = getMaskedVariableIndex(object, state);
     if (memberIndex === -1) return;
     if (memberIndex !== 0) {
       state.detectedErrors = true;
       console.error(
-        `Detected ${path.toString()} with index ${memberIndex}. At this point only packed arguments should be left!`
+        `Detected ${path.toString()} with index ${memberIndex}. At this point only packed arguments should be left!`,
       );
       return;
     }
-    const property = path.get("property") as NodePath;
+    const property = path.get('property') as NodePath;
     if (!property.isNumericLiteral()) {
       state.detectedErrors = true;
       console.error(
-        `Detected ${path.toString()} which property is not number literal. At this point only packed arguments should be left!`
+        `Detected ${path.toString()} which property is not number literal. At this point only packed arguments should be left!`,
       );
       return;
     }

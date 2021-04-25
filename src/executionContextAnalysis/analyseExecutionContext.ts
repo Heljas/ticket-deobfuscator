@@ -1,10 +1,10 @@
-import { ExecutionContextState } from "./types/ExecutionContextState";
-import { PrimitiveMemberExpression } from "./types/PrimitiveMemberExpression";
+import { ExecutionContextState } from './types/ExecutionContextState';
+import { PrimitiveMemberExpression } from './types/PrimitiveMemberExpression';
 
-import { FIND_GLOBAL_MEMBER_EXPRESSIONS } from "./visitors/findGlobalMemberExpressions";
-import { FIND_GLOBAL_FUNCTIONS } from "./visitors/findGlobalFunctions";
-import { utils } from "../utils";
-import { StringsEncryptFunction } from "./types/StringsEncryptFunction";
+import { FIND_GLOBAL_MEMBER_EXPRESSIONS } from './visitors/findGlobalMemberExpressions';
+import { FIND_GLOBAL_FUNCTIONS } from './visitors/findGlobalFunctions';
+import { utils } from '../utils';
+import { StringsEncryptFunction } from './types/StringsEncryptFunction';
 
 export const analyseExecutionContext = async (filepath: string) => {
   const ast = await utils.loadAstFromFile(filepath);
@@ -19,6 +19,6 @@ export const analyseExecutionContext = async (filepath: string) => {
     ast,
     initialState,
     FIND_GLOBAL_MEMBER_EXPRESSIONS,
-    FIND_GLOBAL_FUNCTIONS
+    FIND_GLOBAL_FUNCTIONS,
   );
 };

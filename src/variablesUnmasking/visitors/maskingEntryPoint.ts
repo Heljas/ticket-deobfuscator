@@ -1,32 +1,21 @@
-import { NodePath, Visitor } from "@babel/traverse";
-import {
-  ClassMethod,
-  FunctionDeclaration,
-  FunctionExpression,
-  identifier,
-  isIdentifier,
-} from "@babel/types";
-import { utils } from "../../utils";
-import { VariablesMaskingState } from "../types/VariablesMaskingState";
-import { FIND_MASKING_DECLARATOR } from "./findMaskingDeclarator";
-import { GENERATE_VARIABLES_DECLARATIONS } from "./generateVariablesDeclarations";
-import { REMOVE_SEQUENCE_EXPRESSIONS } from "./removeSequenceExpressions";
-import { REPLACE_WITH_VARIABLES } from "./replaceWithVariables";
-import { UNPACK_ARGUMENTS } from "./unpackArguments";
+import { NodePath, Visitor } from '@babel/traverse';
+import { ClassMethod, FunctionDeclaration, FunctionExpression, identifier, isIdentifier } from '@babel/types';
+import { utils } from '../../utils';
+import { VariablesMaskingState } from '../types/VariablesMaskingState';
+import { FIND_MASKING_DECLARATOR } from './findMaskingDeclarator';
+import { GENERATE_VARIABLES_DECLARATIONS } from './generateVariablesDeclarations';
+import { REMOVE_SEQUENCE_EXPRESSIONS } from './removeSequenceExpressions';
+import { REPLACE_WITH_VARIABLES } from './replaceWithVariables';
+import { UNPACK_ARGUMENTS } from './unpackArguments';
 
-const handler = (
-  path:
-    | NodePath<FunctionDeclaration>
-    | NodePath<FunctionExpression>
-    | NodePath<ClassMethod>
-) => {
+const handler = (path: NodePath<FunctionDeclaration> | NodePath<FunctionExpression> | NodePath<ClassMethod>) => {
   if (!path.node.start) return;
   const program = path.find((p) => p.isProgram());
   if (!program) return;
 
   const state: VariablesMaskingState = {
     maskingDeclarator: null,
-    declaratorName: "not-found",
+    declaratorName: 'not-found',
     maskedVariables: [],
     scopeUid: path.node.start,
     arguments: [],
@@ -50,7 +39,7 @@ const handler = (
     GENERATE_VARIABLES_DECLARATIONS,
     REPLACE_WITH_VARIABLES,
     UNPACK_ARGUMENTS,
-    REMOVE_SEQUENCE_EXPRESSIONS
+    REMOVE_SEQUENCE_EXPRESSIONS,
   );
 
   if (!state.maskingDeclarator) return;

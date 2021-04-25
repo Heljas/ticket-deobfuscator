@@ -1,6 +1,6 @@
-import { NodePath, Scope } from "@babel/traverse";
-import { VariableDeclarator } from "@babel/types";
-import { MaskedVariable } from "./MaskedVariable";
+import { NodePath, Scope } from '@babel/traverse';
+import { VariableDeclarator } from '@babel/types';
+import { MaskedVariable } from './MaskedVariable';
 
 export interface VariablesMaskingState {
   maskingDeclarator: NodePath<VariableDeclarator> | null;

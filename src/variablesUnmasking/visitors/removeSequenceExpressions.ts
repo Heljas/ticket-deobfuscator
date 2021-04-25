@@ -1,5 +1,5 @@
-import { isNumericLiteral } from "@babel/types";
-import { NodePath } from "@babel/traverse";
+import { isNumericLiteral } from '@babel/types';
+import { NodePath } from '@babel/traverse';
 
 export const REMOVE_SEQUENCE_EXPRESSIONS = {
   SequenceExpression(path: NodePath) {
