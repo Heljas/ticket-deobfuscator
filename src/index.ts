@@ -1,14 +1,21 @@
-import { Evaluator } from './evaluator';
-import { analyseExecutionContext } from './executionContextAnalysis/analyseExecutionContext';
-import { GlobalState } from './GlobalState';
-import { cleanupMemberExpressions } from './memberExpressionsCleanup/cleanupMemberExpressions';
-import { utils } from './utils';
-import { unmaskVariables } from './variablesUnmasking/unmaskVariables';
+import { removeControlFlowFlattening } from './controlFlowFlattening/removeControlFlowFlattening';
+import { Evaluator } from './common/evaluator';
+import { analyseExecutionContext } from './analyseExecutionContext/analyseExecutionContext';
+import { GlobalState } from './common/types/GlobalState';
+import { inlineBlockConstants } from './inlineBlockConstants/inlineBlockConstants';
+import { inlineGlobalConstants } from './inlineGlobalConstants/inlineGlobalConstants';
+import { decryptStrings } from './decryptStrings/decryptStrings';
+import { utils } from './common/utils';
+import { unmaskVariables } from './unmaskVariables/unmaskVariables';
+import { removeReassignments } from './removeReassignments/removeReassignments';
+import { cleanUp } from './cleanup/cleanup';
 
 (async () => {
   const [executionContextFilename, targetFilename] = process.argv.slice(2);
 
-  const executionContext = await analyseExecutionContext(`fixtures/${executionContextFilename}.js`);
+  const executionContext = await analyseExecutionContext(
+    `fixtures/${executionContextFilename}.js`,
+  );
 
   const evaluator = new Evaluator(`fixtures/${executionContextFilename}.js`);
 
@@ -17,11 +24,24 @@ import { unmaskVariables } from './variablesUnmasking/unmaskVariables';
     evaluator,
   };
 
-  const targetAST = await utils.loadAstFromFile(`fixtures/${targetFilename}.js`);
+  const sourceAST = await utils.loadAstFromFile(
+    `fixtures/${targetFilename}.js`,
+  );
 
-  const parsedAst = cleanupMemberExpressions(targetAST, globalState);
-  const unmasked = unmaskVariables(parsedAst, globalState);
+  const deofbuscatedAST = utils.run(
+    sourceAST,
+    globalState,
+    //* Steps *
+    inlineGlobalConstants,
+    unmaskVariables,
+    removeControlFlowFlattening,
+    removeReassignments,
+    inlineBlockConstants, //Inline again after strigs are decoded
+    decryptStrings,
+    inlineBlockConstants,
+    cleanUp,
+  );
 
-  await utils.generateOutput(unmasked, targetFilename);
+  await utils.generateOutput(deofbuscatedAST, targetFilename);
   evaluator.stop();
 })();
