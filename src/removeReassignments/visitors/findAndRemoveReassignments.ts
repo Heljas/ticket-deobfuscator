@@ -1,19 +1,9 @@
 import { NodePath, Visitor } from '@babel/traverse';
 import {
-  ArrowFunctionExpression,
   BlockStatement,
-  ClassMethod,
-  FunctionDeclaration,
-  FunctionExpression,
+  Expression,
   identifier,
   isIdentifier,
-  isNumericLiteral,
-  isStringLiteral,
-  NumericLiteral,
-  numericLiteral,
-  ObjectMethod,
-  StringLiteral,
-  stringLiteral,
   variableDeclaration,
   variableDeclarator,
 } from '@babel/types';
@@ -23,21 +13,20 @@ const pushVariable = (
   container: ReassignedVariable[],
   child: NodePath,
   name: string,
-  init: StringLiteral | NumericLiteral,
+  init: Expression,
 ) => {
   let variable = container.find((v) => v.name == name);
   if (!variable) {
     variable = {
       name,
       paths: [],
-      value: -1,
+      value: null,
     };
     container.push(variable);
   }
-  variable.value = init.value;
+  variable.value = init;
   variable.paths.push(child);
 };
-
 
 export const FIND_AND_REMOVE_REASSIGNMENTS: Visitor = {
   BlockStatement: function (path: NodePath<BlockStatement>) {
@@ -57,7 +46,6 @@ export const FIND_AND_REMOVE_REASSIGNMENTS: Visitor = {
         const id = declaration.node.id;
         if (!isIdentifier(id)) continue;
         const init = declaration.node.init;
-        if (!isStringLiteral(init) && !isNumericLiteral(init)) continue;
         pushVariable(variables, child, id.name, init);
       } else {
         const expression = child.get('expression') as NodePath;
@@ -65,20 +53,17 @@ export const FIND_AND_REMOVE_REASSIGNMENTS: Visitor = {
         const id = expression.node.left;
         if (!isIdentifier(id)) continue;
         const init = expression.node.right;
-        if (!isStringLiteral(init) && !isNumericLiteral(init)) continue;
         pushVariable(variables, child, id.name, init);
       }
     }
     variables.forEach((variable) => {
       const [firstPath, ...otherPaths] = variable.paths;
+      if (otherPaths.length === 0) return;
+
       otherPaths.forEach((p) => p.remove());
-      const init =
-        typeof variable.value === 'string'
-          ? stringLiteral(variable.value)
-          : numericLiteral(variable.value);
       firstPath.replaceWith(
         variableDeclaration('var', [
-          variableDeclarator(identifier(variable.name), init),
+          variableDeclarator(identifier(variable.name), variable.value),
         ]),
       );
     });
