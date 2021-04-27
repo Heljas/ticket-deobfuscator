@@ -33,12 +33,13 @@ import { cleanUp } from './cleanup/cleanup';
     globalState,
     //* Steps *
     inlineGlobalConstants,
+    inlineBlockConstants, //Inline variables used to index masked variables
     unmaskVariables,
     removeControlFlowFlattening,
     removeReassignments,
-    inlineBlockConstants, //Inline again after strigs are decoded
-    decryptStrings,
     inlineBlockConstants,
+    decryptStrings,
+    inlineBlockConstants, //Inline again after strigs are decoded
     cleanUp,
   );
 

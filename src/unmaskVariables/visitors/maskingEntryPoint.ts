@@ -1,10 +1,12 @@
 import { NodePath, Visitor } from '@babel/traverse';
 import {
+  ArrowFunctionExpression,
   ClassMethod,
   FunctionDeclaration,
   FunctionExpression,
   identifier,
   isIdentifier,
+  ObjectMethod,
 } from '@babel/types';
 import { utils } from '../../common/utils';
 import { VariablesMaskingState } from '../types/VariablesMaskingState';
@@ -15,10 +17,13 @@ import { REPLACE_WITH_VARIABLES } from './replaceWithVariables';
 import { UNPACK_ARGUMENTS } from './unpackArguments';
 
 const handler = (
-  path:
-    | NodePath<FunctionDeclaration>
-    | NodePath<FunctionExpression>
-    | NodePath<ClassMethod>,
+  path: NodePath<
+    | FunctionDeclaration
+    | FunctionExpression
+    | ArrowFunctionExpression
+    | ObjectMethod
+    | ClassMethod
+  >,
 ) => {
   if (!path.node.start) return;
   const program = path.find((p) => p.isProgram());
@@ -70,6 +75,12 @@ export const MASKING_ENTRY_POINT: Visitor = {
     handler(path);
   },
   FunctionExpression: function (path: NodePath<FunctionExpression>) {
+    handler(path);
+  },
+  ArrowFunctionExpression: function (path: NodePath<ArrowFunctionExpression>) {
+    handler(path);
+  },
+  ObjectMethod: function (path: NodePath<ObjectMethod>) {
     handler(path);
   },
   ClassMethod: function (path: NodePath<ClassMethod>) {

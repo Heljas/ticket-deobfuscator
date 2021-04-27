@@ -11,7 +11,14 @@ export const GENERATE_VARIABLES_DECLARATIONS: Visitor = {
     const maskedVariable = state.maskedVariables.find((m) => m.index === index);
     if (maskedVariable) return; //Already created variable declaration
     const parent = path.parentPath;
-    if (!parent.isAssignmentExpression({ operator: '=' })) return;
+
+    //Make sure we are on the left side of the assignment expression
+    if (
+      !parent.isAssignmentExpression({ operator: '=' }) ||
+      path.key !== 'left'
+    )
+      return;
+
     const name = generateIdentifier(state.globalScope);
     state.maskedVariables.push({
       name,
@@ -21,10 +28,16 @@ export const GENERATE_VARIABLES_DECLARATIONS: Visitor = {
     const id = identifier(name);
     const declarator = variableDeclarator(id, initialValue);
     const declaration = variableDeclaration('var', [declarator]);
-    if (!parent.parentPath.isForStatement()) {
-      parent.insertAfter(declaration);
-      parent.remove();
+
+    /*
+      ExpressionStatement/ForStatement
+        AssignmentExpression
+          MemberExpression <- we are here
+    */
+    if (parent.parentPath.isExpressionStatement()) {
+      parent.parentPath.replaceWith(declaration);
     } else {
+      //parent.parentPath is ForStatement, we need to replace AssignmentExpression
       parent.replaceWith(declaration);
     }
   },
