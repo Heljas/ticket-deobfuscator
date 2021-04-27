@@ -6,6 +6,7 @@ import {
   FunctionExpression,
   ObjectMethod,
 } from '@babel/types';
+import { GlobalState } from '../../common/types/GlobalState';
 import { utils } from '../../common/utils';
 import { InlineConstantsState } from '../types/InlineConstantsState';
 import { FIND_DECLARATORS } from './findDeclarators';
@@ -35,12 +36,14 @@ function handler(
     | ObjectMethod
     | ClassMethod
   >,
+  globalState: GlobalState,
 ) {
   const constantBindings = Object.values(path.scope.bindings)
     .filter((binding) => binding.kind === 'var' && isBindingConstant(binding))
     .map((binding) => binding.identifier.name);
 
   const state: InlineConstantsState = {
+    global: globalState,
     constantBindings,
     variables: [],
     unexpectedError: false,
@@ -56,20 +59,29 @@ function handler(
   state.variables.forEach((v) => v.declaration.remove());
 }
 
-export const INLINE_CONSTANS_ENTRY_POINT: Visitor = {
-  FunctionDeclaration: function (path: NodePath<FunctionDeclaration>) {
-    handler(path);
+export const INLINE_CONSTANS_ENTRY_POINT: Visitor<GlobalState> = {
+  FunctionDeclaration: function (
+    path: NodePath<FunctionDeclaration>,
+    state: GlobalState,
+  ) {
+    handler(path, state);
   },
-  FunctionExpression: function (path: NodePath<FunctionExpression>) {
-    handler(path);
+  FunctionExpression: function (
+    path: NodePath<FunctionExpression>,
+    state: GlobalState,
+  ) {
+    handler(path, state);
   },
-  ArrowFunctionExpression: function (path: NodePath<ArrowFunctionExpression>) {
-    handler(path);
+  ArrowFunctionExpression: function (
+    path: NodePath<ArrowFunctionExpression>,
+    state: GlobalState,
+  ) {
+    handler(path, state);
   },
-  ObjectMethod: function (path: NodePath<ObjectMethod>) {
-    handler(path);
+  ObjectMethod: function (path: NodePath<ObjectMethod>, state: GlobalState) {
+    handler(path, state);
   },
-  ClassMethod: function (path: NodePath<ClassMethod>) {
-    handler(path);
+  ClassMethod: function (path: NodePath<ClassMethod>, state: GlobalState) {
+    handler(path, state);
   },
 };

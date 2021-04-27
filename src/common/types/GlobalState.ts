@@ -4,4 +4,5 @@ import { ExecutionContextState } from '../../analyseExecutionContext/types/Execu
 export interface GlobalState {
   executionContext: ExecutionContextState;
   evaluator: Evaluator;
+  errors: string[];
 }

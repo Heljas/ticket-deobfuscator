@@ -13,11 +13,13 @@ export const REPLACE_WITH_VARIABLES: Visitor = {
     if (index < 1) return;
     const maskedVariable = state.maskedVariables.find((m) => m.index === index);
     if (!maskedVariable) {
-      if (path.key !== 'object') {
+      if (path.key === 'right') {
         path.replaceWith(identifier('undefined'));
       } else {
-        console.error(
-          `Couldn't replace ${path.toString()} with undefined - key is object. Something went wrong earlier!`,
+        state.global.errors.push(
+          `[replaceWithVariables.ts] Couldn't replace ${path.toString()} with undefined - key is ${
+            path.key
+          }. Something went wrong earlier!`,
         );
       }
       return;

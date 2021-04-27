@@ -8,6 +8,7 @@ import {
   isIdentifier,
   ObjectMethod,
 } from '@babel/types';
+import { GlobalState } from '../../common/types/GlobalState';
 import { utils } from '../../common/utils';
 import { VariablesMaskingState } from '../types/VariablesMaskingState';
 import { FIND_MASKING_DECLARATOR } from './findMaskingDeclarator';
@@ -24,12 +25,14 @@ const handler = (
     | ObjectMethod
     | ClassMethod
   >,
+  globalState: GlobalState,
 ) => {
   if (!path.node.start) return;
   const program = path.find((p) => p.isProgram());
   if (!program) return;
 
   const state: VariablesMaskingState = {
+    global: globalState,
     maskingDeclarator: null,
     declaratorName: 'not-found',
     maskedVariables: [],
@@ -55,7 +58,6 @@ const handler = (
     GENERATE_VARIABLES_DECLARATIONS,
     REPLACE_WITH_VARIABLES,
     UNPACK_ARGUMENTS,
-    REMOVE_SEQUENCE_EXPRESSIONS,
   );
 
   if (!state.maskingDeclarator) return;
@@ -70,20 +72,29 @@ const handler = (
   state.maskingDeclarator.remove();
 };
 
-export const MASKING_ENTRY_POINT: Visitor = {
-  FunctionDeclaration: function (path: NodePath<FunctionDeclaration>) {
-    handler(path);
+export const MASKING_ENTRY_POINT: Visitor<GlobalState> = {
+  FunctionDeclaration: function (
+    path: NodePath<FunctionDeclaration>,
+    state: GlobalState,
+  ) {
+    handler(path, state);
   },
-  FunctionExpression: function (path: NodePath<FunctionExpression>) {
-    handler(path);
+  FunctionExpression: function (
+    path: NodePath<FunctionExpression>,
+    state: GlobalState,
+  ) {
+    handler(path, state);
   },
-  ArrowFunctionExpression: function (path: NodePath<ArrowFunctionExpression>) {
-    handler(path);
+  ArrowFunctionExpression: function (
+    path: NodePath<ArrowFunctionExpression>,
+    state: GlobalState,
+  ) {
+    handler(path, state);
   },
-  ObjectMethod: function (path: NodePath<ObjectMethod>) {
-    handler(path);
+  ObjectMethod: function (path: NodePath<ObjectMethod>, state: GlobalState) {
+    handler(path, state);
   },
-  ClassMethod: function (path: NodePath<ClassMethod>) {
-    handler(path);
+  ClassMethod: function (path: NodePath<ClassMethod>, state: GlobalState) {
+    handler(path, state);
   },
 };

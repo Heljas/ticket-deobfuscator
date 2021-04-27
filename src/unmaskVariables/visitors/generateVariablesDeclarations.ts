@@ -43,12 +43,16 @@ function handleAssignmentExpression(
   }
   const outerPath = parent.parentPath;
   /*
-      ExpressionStatement/ForStatement (outerPath)
+      ExpressionStatement/ForStatement/SequenceExpression (outerPath)
         AssignmentExpression
           MemberExpression <- we are here
   */
 
-  if (!outerPath.isExpressionStatement() && !outerPath.isForStatement()) {
+  if (
+    !outerPath.isExpressionStatement() &&
+    !outerPath.isForStatement() &&
+    !outerPath.isSequenceExpression()
+  ) {
     return;
   }
 
@@ -64,9 +68,15 @@ function handleAssignmentExpression(
 
   if (outerPath.isExpressionStatement()) {
     outerPath.replaceWith(declaration);
-  } else {
-    //outerPath is ForStatement, we only need to replace AssignmentExpression
+  } else if (outerPath.isForStatement()) {
+    //We only need to replace AssignmentExpression
     parent.replaceWith(declaration);
+  } else {
+    //SequenceExpression
+
+    //Insert before ExpressionStatement
+    outerPath.parentPath.insertBefore(declaration);
+    parent.remove();
   }
 }
 

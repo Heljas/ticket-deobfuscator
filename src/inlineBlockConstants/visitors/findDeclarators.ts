@@ -42,6 +42,7 @@ export const FIND_DECLARATORS: Visitor<InlineConstantsState> = {
       if (!path.parentPath.isVariableDeclaration()) return;
       state.variables.push({ name, value, declaration: path.parentPath });
     } catch {
+      state.global.errors.push('[findDeclarators.ts] Unexpected error!');
       state.unexpectedError = true;
     }
   },

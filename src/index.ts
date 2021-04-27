@@ -22,6 +22,7 @@ import { cleanUp } from './cleanup/cleanup';
   const globalState: GlobalState = {
     executionContext,
     evaluator,
+    errors: [],
   };
 
   const sourceAST = await utils.loadAstFromFile(
@@ -42,6 +43,8 @@ import { cleanUp } from './cleanup/cleanup';
     inlineBlockConstants, //Inline again after strigs are decoded
     cleanUp,
   );
+
+  console.log(globalState.errors);
 
   await utils.generateOutput(deofbuscatedAST, targetFilename);
   evaluator.stop();
