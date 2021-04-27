@@ -7,21 +7,30 @@ import { StringPart } from '../types/StringPart';
 const getStringPart = (
   path: NodePath<Node>,
   identifierName: string,
-): StringPart | null => {
-  if (!path.isExpressionStatement()) return null;
+): { part: StringPart | null; done: boolean } => {
+  if (!path.isExpressionStatement()) {
+    return { part: null, done: false };
+  }
   const expression = path.get('expression') as NodePath;
-  if (!expression.isAssignmentExpression({ operator: '+=' })) return null;
+
+  if (!expression.isAssignmentExpression({ operator: '+=' })) {
+    return { part: null, done: false };
+  }
+
   const left = expression.get('left');
   const right = expression.get('right');
   if (
     !left.isIdentifier({ name: identifierName }) ||
     !right.isStringLiteral()
   ) {
-    return null;
+    return { part: null, done: true };
   }
   return {
-    path,
-    value: right.node.value,
+    part: {
+      path,
+      value: right.node.value,
+    },
+    done: false,
   };
 };
 
@@ -40,8 +49,13 @@ export const MERGE_STRING_PARTS: Visitor<GlobalState> = {
     };
 
     for (const sibling of path.getAllNextSiblings()) {
-      const part = getStringPart(sibling, string.identifierName);
-      if (!part) continue;
+      const { part, done } = getStringPart(sibling, string.identifierName);
+      if (!part) {
+        if (!done) {
+          continue;
+        }
+        break;
+      }
       string.parts.push(part);
     }
 
