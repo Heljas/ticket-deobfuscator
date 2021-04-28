@@ -45,7 +45,6 @@ export class Evaluator {
     try {
       const result = this.window.eval(code) as unknown;
       if (typeof result !== expectedType) return undefined;
-      console.log(`${code} -> ${result}`);
       return result as T;
     } catch (ex) {
       //We probably will use typeof on result and typeof null returns "object", so we return undefined

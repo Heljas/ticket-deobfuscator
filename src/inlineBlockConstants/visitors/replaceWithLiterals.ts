@@ -24,13 +24,9 @@ export const REPLACE_WITH_LITERALS: Visitor<InlineConstantsState> = {
         break;
       case 'number':
         //Avoid 5.toString() calls, convert it to "5".toString()
-        if (path.parentPath.isMemberExpression()) {
-          if (
-            isIdentifier(path.parentPath.node.property, { name: 'toString' })
-          ) {
-            path.replaceWith(stringLiteral(variable.value.toString()));
-            break;
-          }
+        if (path.parentPath.isMemberExpression() && path.key === 'object') {
+          path.replaceWith(stringLiteral(variable.value.toString()));
+          break;
         }
         path.replaceWith(numericLiteral(variable.value));
         break;
