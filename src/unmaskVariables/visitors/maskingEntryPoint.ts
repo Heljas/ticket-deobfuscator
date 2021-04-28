@@ -13,7 +13,6 @@ import { utils } from '../../common/utils';
 import { VariablesMaskingState } from '../types/VariablesMaskingState';
 import { FIND_MASKING_DECLARATOR } from './findMaskingDeclarator';
 import { GENERATE_VARIABLES_DECLARATIONS } from './generateVariablesDeclarations';
-import { REMOVE_SEQUENCE_EXPRESSIONS } from './removeSequenceExpressions';
 import { REPLACE_WITH_VARIABLES } from './replaceWithVariables';
 import { UNPACK_ARGUMENTS } from './unpackArguments';
 
