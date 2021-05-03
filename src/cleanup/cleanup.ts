@@ -5,6 +5,7 @@ import { BRACKET_TO_DOT_NOTATION } from './visitors/bracketToDotNotation';
 import { CLEAN_IF_STATEMENTS } from './visitors/cleanIfStatements';
 import { CLEAN_LOGICAL_EXPRESSIONS } from './visitors/cleanLogicalExpressions';
 import { EVALUATE_EXTENDED_PREDICATES } from './visitors/evaluateExtendedPredicates';
+import { RECOVER_OBJECT_EXPRESSIONS } from './visitors/recoverObjectExpressions';
 import { REMOVE_SEQUENCE_EXPRESSIONS } from './visitors/removeSequenceExpressions';
 
 export const cleanUp = (ast: File, globalState: GlobalState) => {
@@ -16,6 +17,7 @@ export const cleanUp = (ast: File, globalState: GlobalState) => {
     CLEAN_LOGICAL_EXPRESSIONS,
     CLEAN_IF_STATEMENTS,
     REMOVE_SEQUENCE_EXPRESSIONS,
+    RECOVER_OBJECT_EXPRESSIONS,
   );
   return ast;
 };
