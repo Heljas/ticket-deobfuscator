@@ -4,7 +4,7 @@ import { generateIdentifier } from '../generateIdentifier';
 import { getMaskedVariableIndex } from '../getMaskedVariableIndex';
 import { VariablesMaskingState } from '../types/VariablesMaskingState';
 
-export const REPLACE_WITH_VARIABLES: Visitor = {
+export const REPLACE_WITH_VARIABLES: Visitor<VariablesMaskingState> = {
   MemberExpression: function (
     path: NodePath<MemberExpression>,
     state: VariablesMaskingState,

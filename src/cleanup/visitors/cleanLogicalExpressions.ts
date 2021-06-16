@@ -19,6 +19,8 @@ export const CLEAN_LOGICAL_EXPRESSIONS: Visitor<GlobalState> = {
     } else if (right.isBooleanLiteral()) {
       booleanValue = right.node.value;
       otherSide = left;
+    } else {
+      return;
     }
 
     if (operator === '&&' && !booleanValue) return;

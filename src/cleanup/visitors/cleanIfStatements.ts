@@ -20,7 +20,7 @@ export const CLEAN_IF_STATEMENTS: Visitor<GlobalState> = {
     if (replacement.isBlockStatement()) {
       const replacementBody = replacement.get('body');
       path.replaceWithMultiple(replacementBody.map((path) => path.node));
-    } else {
+    } else if (replacement.isStatement()) {
       path.replaceWith(replacement);
     }
   },

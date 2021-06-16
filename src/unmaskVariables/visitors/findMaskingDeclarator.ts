@@ -2,9 +2,12 @@ import { NodePath, Visitor } from '@babel/traverse';
 import { isIdentifier, VariableDeclarator } from '@babel/types';
 import { VariablesMaskingState } from '../types/VariablesMaskingState';
 
-export const FIND_MASKING_DECLARATOR: Visitor = {
-  VariableDeclarator: function (path: NodePath<VariableDeclarator>, state: VariablesMaskingState) {
-    const scopeUid = path.getFunctionParent().node.start;
+export const FIND_MASKING_DECLARATOR: Visitor<VariablesMaskingState> = {
+  VariableDeclarator: function (
+    path: NodePath<VariableDeclarator>,
+    state: VariablesMaskingState,
+  ) {
+    const scopeUid = path.getFunctionParent()?.node.start;
     if (scopeUid !== state.scopeUid) return;
     if (state.maskingDeclarator && state.declaratorName) return;
     const init = path.get('init') as NodePath;

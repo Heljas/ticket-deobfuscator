@@ -12,8 +12,11 @@ import {
   isIdentifier,
 } from '@babel/types';
 
-export const FIND_GLOBAL_MEMBER_EXPRESSIONS: Visitor = {
-  AssignmentExpression: function (path: NodePath<AssignmentExpression>, state: ExecutionContextState) {
+export const FIND_GLOBAL_MEMBER_EXPRESSIONS: Visitor<ExecutionContextState> = {
+  AssignmentExpression: function (
+    path: NodePath<AssignmentExpression>,
+    state: ExecutionContextState,
+  ) {
     if (path.scope.block.type !== 'Program') return;
     if (!isAssignmentExpression(path.node, { operator: '=' })) return;
     if (!isMemberExpression(path.node.left)) return;
@@ -21,7 +24,11 @@ export const FIND_GLOBAL_MEMBER_EXPRESSIONS: Visitor = {
     const memberExpression = path.node.left;
     if (!isIdentifier(memberExpression.object)) return;
 
-    if (!isIdentifier(memberExpression.property) && !isNumericLiteral(memberExpression.property)) return;
+    if (
+      !isIdentifier(memberExpression.property) &&
+      !isNumericLiteral(memberExpression.property)
+    )
+      return;
 
     const right = path.node.right;
     if (

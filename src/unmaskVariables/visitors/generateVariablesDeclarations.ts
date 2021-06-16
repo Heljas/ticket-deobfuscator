@@ -9,7 +9,7 @@ import { getMaskedVariableIndex } from '../getMaskedVariableIndex';
 import { generateIdentifier } from '../generateIdentifier';
 import { VariablesMaskingState } from '../types/VariablesMaskingState';
 
-export const GENERATE_VARIABLES_DECLARATIONS: Visitor = {
+export const GENERATE_VARIABLES_DECLARATIONS: Visitor<VariablesMaskingState> = {
   MemberExpression: function (
     path: NodePath<MemberExpression>,
     state: VariablesMaskingState,

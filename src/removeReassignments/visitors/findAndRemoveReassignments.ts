@@ -3,6 +3,7 @@ import {
   BlockStatement,
   Expression,
   identifier,
+  isExpression,
   isIdentifier,
   variableDeclaration,
   variableDeclarator,
@@ -46,6 +47,7 @@ export const FIND_AND_REMOVE_REASSIGNMENTS: Visitor = {
         const id = declaration.node.id;
         if (!isIdentifier(id)) continue;
         const init = declaration.node.init;
+        if (!isExpression(init)) continue;
         pushVariable(variables, child, id.name, init);
       } else {
         const expression = child.get('expression') as NodePath;

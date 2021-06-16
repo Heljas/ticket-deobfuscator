@@ -3,7 +3,7 @@ import * as t from '@babel/types';
 import { ObfuscatedBlock } from './obfuscatedBlock';
 import { GlobalState } from '../common/types/GlobalState';
 
-export const ENTRY_POINT: Visitor = {
+export const ENTRY_POINT: Visitor<GlobalState> = {
   ForStatement: function (path: NodePath, state: GlobalState) {
     if (!path.isForStatement()) return;
     if (!t.isForStatement(path.node, { init: null, update: null })) return;

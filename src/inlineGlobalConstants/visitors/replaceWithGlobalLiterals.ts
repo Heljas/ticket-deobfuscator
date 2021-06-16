@@ -11,7 +11,7 @@ import {
 } from '@babel/types';
 import { GlobalState } from '../../common/types/GlobalState';
 
-export const REPLACE_WITH_GLOBAL_LITERALS: Visitor = {
+export const REPLACE_WITH_GLOBAL_LITERALS: Visitor<GlobalState> = {
   MemberExpression: function (
     path: NodePath<MemberExpression>,
     state: GlobalState,

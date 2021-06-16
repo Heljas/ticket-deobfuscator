@@ -3,6 +3,6 @@ import { Expression } from '@babel/types';
 
 export interface ReassignedVariable {
   name: string;
-  value: Expression;
   paths: NodePath[];
+  value: Expression | null;
 }

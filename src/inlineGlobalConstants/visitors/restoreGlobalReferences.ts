@@ -7,7 +7,7 @@ import {
 } from '@babel/types';
 import { GlobalState } from '../../common/types/GlobalState';
 
-export const RESTORE_GLOBAL_REFERENCES: Visitor = {
+export const RESTORE_GLOBAL_REFERENCES: Visitor<GlobalState> = {
   VariableDeclaration: function (
     path: NodePath<VariableDeclaration>,
     state: GlobalState,

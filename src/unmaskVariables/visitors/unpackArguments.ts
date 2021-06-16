@@ -3,7 +3,7 @@ import { identifier, MemberExpression } from '@babel/types';
 import { getMaskedVariableIndex } from '../getMaskedVariableIndex';
 import { VariablesMaskingState } from '../types/VariablesMaskingState';
 
-export const UNPACK_ARGUMENTS: Visitor = {
+export const UNPACK_ARGUMENTS: Visitor<VariablesMaskingState> = {
   MemberExpression: function (
     path: NodePath<MemberExpression>,
     state: VariablesMaskingState,

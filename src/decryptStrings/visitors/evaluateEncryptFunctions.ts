@@ -8,7 +8,7 @@ import {
 } from '@babel/types';
 import { GlobalState } from '../../common/types/GlobalState';
 
-export const EVALUATE_ENCRYPT_FUNCTIONS: Visitor = {
+export const EVALUATE_ENCRYPT_FUNCTIONS: Visitor<GlobalState> = {
   CallExpression: function (
     path: NodePath<CallExpression>,
     state: GlobalState,
