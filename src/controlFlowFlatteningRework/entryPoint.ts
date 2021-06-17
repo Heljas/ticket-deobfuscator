@@ -10,10 +10,12 @@ export const ENTRY_POINT: Visitor<GlobalState> = {
 
     if (!controlFlowConfig) return;
 
-    const controlFlowStatement = new ControlFlowStatement(
+    const unflattenedNodes = new ControlFlowStatement(
       global,
       controlFlowConfig,
-    );
-    controlFlowStatement.traverse();
+    ).getUnflattend();
+    if (!unflattenedNodes) return;
+    console.log(unflattenedNodes.length);
+    path.replaceWithMultiple(unflattenedNodes);
   },
 };
