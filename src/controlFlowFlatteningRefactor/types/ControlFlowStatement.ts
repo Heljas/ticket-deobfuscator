@@ -1,10 +1,5 @@
 import { NodePath } from '@babel/traverse';
-import {
-  Expression,
-  PrivateName,
-  Statement,
-  SwitchStatement,
-} from '@babel/types';
+import { Statement, SwitchStatement } from '@babel/types';
 import { GlobalState } from '../../common/types/GlobalState';
 import { ConditionalBlock } from './ConditionalBlock';
 import { ControlFlowConfig } from './ControlFlowConfig';

@@ -1,8 +1,8 @@
 import { NodePath } from '@babel/traverse';
-import { Expression, PrivateName, SwitchStatement } from '@babel/types';
+import { Expression, Node, SwitchStatement } from '@babel/types';
 
 export interface ControlFlowConfig {
-  discriminant: NodePath<Expression>;
+  stateHolderInitializer: NodePath<Node>;
   startExpression: NodePath<Expression>;
   endExpression: NodePath<Expression>;
   switchStatement: NodePath<SwitchStatement>;

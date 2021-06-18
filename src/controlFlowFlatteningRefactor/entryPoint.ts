@@ -2,7 +2,7 @@ import { NodePath, Visitor } from '@babel/traverse';
 import { ForStatement, isNodesEquivalent } from '@babel/types';
 import { GlobalState } from '../common/types/GlobalState';
 import { ControlFlowStatement } from './types/ControlFlowStatement';
-import { getControlFlowConfig } from './utils/getControlFlowState';
+import { getControlFlowConfig } from './getControlFlowState';
 
 export const ENTRY_POINT: Visitor<GlobalState> = {
   ForStatement: function (path: NodePath<ForStatement>, global: GlobalState) {
@@ -10,12 +10,19 @@ export const ENTRY_POINT: Visitor<GlobalState> = {
 
     if (!controlFlowConfig) return;
 
-    const unflattenedNodes = new ControlFlowStatement(
-      global,
-      controlFlowConfig,
-    ).getUnflattend();
-    if (!unflattenedNodes) return;
-    console.log(unflattenedNodes.length);
-    path.replaceWithMultiple(unflattenedNodes);
+    try {
+      const unflattened = new ControlFlowStatement(
+        global,
+        controlFlowConfig,
+      ).getUnflattend();
+
+      path.replaceWithMultiple(unflattened);
+      controlFlowConfig.stateHolderInitializer.remove();
+    } catch (ex) {
+      console.log(
+        `Couldn't unflatten control flow statement with state: ${controlFlowConfig.stateHolderInitializer.toString()}`,
+      );
+      console.log(ex.toString());
+    }
   },
 };

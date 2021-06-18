@@ -4,12 +4,9 @@ import {
   Expression,
   ForStatement,
   isNodesEquivalent,
-  SwitchStatement,
 } from '@babel/types';
-import { getPrevSibling } from '../../common/babelExtensions';
-import { GlobalState } from '../../common/types/GlobalState';
-import { ControlFlowConfig } from '../types/ControlFlowConfig';
-import { Step } from '../types/Step';
+import { getPrevSibling } from '../common/babelExtensions';
+import { ControlFlowConfig } from './types/ControlFlowConfig';
 
 export const getControlFlowConfig = (
   path: NodePath<ForStatement>,
@@ -27,21 +24,25 @@ export const getControlFlowConfig = (
 
   const discriminant = firstStatement.get('discriminant');
 
-  const endValue = getEndValue(discriminant, test);
-  if (!endValue || !endValue.isExpression()) return null;
+  const endExpression = getEndExpression(discriminant, test);
+  if (!endExpression || !endExpression.isExpression()) return null;
 
-  const initialValue = getInitialValue(discriminant, getPrevSibling(path));
-  if (!initialValue || !initialValue.isExpression()) return null;
+  const stateHolderInitializer = getPrevSibling(path);
+  const startExpression = getStartExpression(
+    discriminant,
+    stateHolderInitializer,
+  );
+  if (!startExpression || !startExpression.isExpression()) return null;
 
   return {
     switchStatement: firstStatement,
-    discriminant,
-    startExpression: initialValue,
-    endExpression: endValue,
+    stateHolderInitializer,
+    startExpression,
+    endExpression,
   };
 };
 
-const getInitialValue = (
+const getStartExpression = (
   discriminant: NodePath<Expression>,
   sibling: NodePath,
 ) => {
@@ -64,7 +65,7 @@ const getInitialValue = (
   return null;
 };
 
-const getEndValue = (
+const getEndExpression = (
   discriminant: NodePath<Expression>,
   test: NodePath<BinaryExpression>,
 ) => {
