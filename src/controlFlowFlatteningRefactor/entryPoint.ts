@@ -1,5 +1,5 @@
 import { NodePath, Visitor } from '@babel/traverse';
-import { ForStatement, isNodesEquivalent } from '@babel/types';
+import { ForStatement } from '@babel/types';
 import { GlobalState } from '../common/types/GlobalState';
 import { ControlFlowStatement } from './types/ControlFlowStatement';
 import { getControlFlowConfig } from './getControlFlowState';

@@ -6,6 +6,8 @@ import {
   Statement,
   whileStatement,
   ifStatement,
+  isNodesEquivalent,
+  isReturnStatement,
 } from '@babel/types';
 import { Step } from './Step';
 import { Transition } from './Transition';
@@ -17,7 +19,7 @@ export class ConditionalBlock {
   private readonly consequentNodes: Statement[] = [];
   private readonly alternateNodes: Statement[] = [];
 
-  public isLoop = false;
+  private isLoop = false;
   private executingAlternate = false;
 
   constructor(
@@ -43,10 +45,6 @@ export class ConditionalBlock {
     }
   }
 
-  public build() {
-    return this.isLoop ? this.buildLoop() : this.buildIfStatement();
-  }
-
   public getConsequentTransition() {
     return this.consequentTransition;
   }
@@ -60,17 +58,63 @@ export class ConditionalBlock {
     return this.executingAlternate;
   }
 
+  public build() {
+    return this.isLoop ? this.buildLoop() : this.buildIfStatement();
+  }
+
+  public markAsLoop() {
+    this.isLoop = true;
+  }
+
   private buildLoop() {
     const block = blockStatement(this.consequentNodes);
-    return whileStatement(this.condition.node, block);
+    return [whileStatement(this.condition.node, block)];
   }
 
   private buildIfStatement() {
-    const consequent = blockStatement(this.consequentNodes);
-    if (this.alternateNodes.length > 0) {
-      const alternate = blockStatement(this.alternateNodes);
-      return ifStatement(this.condition.node, consequent, alternate);
+    if (this.alternateNodes.length == 0) {
+      const consequent = blockStatement(this.consequentNodes);
+      return [ifStatement(this.condition.node, consequent)];
     }
-    return ifStatement(this.condition.node, consequent);
+
+    const reversedAlternate = [...this.alternateNodes].reverse();
+    const reversedConsequent = [...this.consequentNodes].reverse();
+    const duplicatedNodes: Statement[] = [];
+
+    for (
+      let i = 0;
+      i < reversedAlternate.length && i < reversedConsequent.length;
+      i++
+    ) {
+      if (!isNodesEquivalent(reversedAlternate[i], reversedConsequent[i]))
+        break;
+      duplicatedNodes.push(reversedAlternate[i]);
+    }
+    duplicatedNodes.reverse();
+
+    const n = duplicatedNodes.length;
+    this.consequentNodes.splice(this.consequentNodes.length - n, n);
+    this.alternateNodes.splice(this.alternateNodes.length - n, n);
+
+    const consequent = blockStatement(this.consequentNodes);
+    const lastConsequentNode = this.consequentNodes[
+      this.consequentNodes.length - 1
+    ];
+    if (isReturnStatement(lastConsequentNode)) {
+      return [
+        ifStatement(this.condition.node, consequent),
+        ...this.alternateNodes,
+      ];
+    }
+
+    const alternate =
+      this.alternateNodes.length > 0
+        ? blockStatement(this.alternateNodes)
+        : null;
+
+    return [
+      ifStatement(this.condition.node, consequent, alternate),
+      ...duplicatedNodes,
+    ];
   }
 }

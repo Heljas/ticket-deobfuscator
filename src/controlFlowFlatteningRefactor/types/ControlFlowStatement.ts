@@ -10,16 +10,17 @@ export class ControlFlowStatement {
   public readonly startTransition: Transition;
   public readonly endTransition: Transition;
   private readonly switchStatement: NodePath<SwitchStatement>;
+  private static readonly INFINITE_LOOP_THRESHOLD = 3000;
 
   private readonly steps: Step[];
   private readonly nodes: Statement[] = [];
   private readonly conditionalBlocksStack: ConditionalBlock[] = [];
 
-  private transitionsCounter = 0;
+  private transitionChangesCounter = 0;
   private _currentTransition: Transition;
   private set currentTransition(transition: Transition) {
     this._currentTransition = transition;
-    this.transitionsCounter++;
+    this.transitionChangesCounter++;
   }
   private get currentTransition() {
     return this._currentTransition;
@@ -44,24 +45,13 @@ export class ControlFlowStatement {
       !this.currentTransition.isEnd() ||
       this.conditionalBlocksStack.length > 0
     ) {
-      if (this.transitionsCounter > 50) {
-        throw new Error('Detected infinitive loop');
+      if (this.isInfiniteLoop()) {
+        throw new Error('Detected infinite loop');
       }
 
       if (this.currentTransition.isEnd()) {
-        //!
-        const currentBlock = this.getCurrentBlock();
-        if (currentBlock.isExecutingAlternate()) {
-          //* Pop current block
-          const blockStatement = currentBlock.build();
-          this.conditionalBlocksStack.shift();
-          this.pushNode(blockStatement);
-          continue;
-        } else {
-          this.currentTransition = currentBlock.getAlternateTransition();
-        }
+        this.chooseNextPath();
         continue;
-        //!
       }
 
       const currentStep = this.getStep(this.currentTransition);
@@ -71,22 +61,8 @@ export class ControlFlowStatement {
         );
       }
 
-      //* Detect loop
-      if (currentStep.isVisited) {
-        this.markAsLoop(currentStep);
-
-        //!
-        const currentBlock = this.getCurrentBlock();
-        if (currentBlock.isExecutingAlternate()) {
-          //* Pop current block
-          const blockStatement = currentBlock.build();
-          this.conditionalBlocksStack.shift();
-          this.pushNode(blockStatement);
-          continue;
-        } else {
-          this.currentTransition = currentBlock.getAlternateTransition();
-        }
-        //!
+      if (currentStep.isVisited && this.isStepLooped(currentStep)) {
+        this.chooseNextPath();
         continue;
       }
 
@@ -108,14 +84,29 @@ export class ControlFlowStatement {
     return this.nodes;
   }
 
-  private markAsLoop(step: Step) {
-    const block = this.conditionalBlocksStack.find((b) => b.parentStep == step);
+  private chooseNextPath() {
+    const currentBlock = this.getCurrentBlock();
+    if (currentBlock.isExecutingAlternate()) {
+      //* Pop current block
+      const blockNodes = currentBlock.build();
+      this.conditionalBlocksStack.shift();
+      this.pushNode(...blockNodes);
+    } else {
+      this.currentTransition = currentBlock.getAlternateTransition();
+    }
+  }
+
+  private isStepLooped(step: Step) {
+    const block = this.conditionalBlocksStack.find(
+      (b) => b.parentStep === step,
+    );
 
     if (!block) {
-      throw new Error('Detected loop without a conditional block');
+      return false;
     }
 
-    block.isLoop = true;
+    block.markAsLoop();
+    return true;
   }
 
   private pushNode(...nodesToPush: Statement[]) {
@@ -133,5 +124,12 @@ export class ControlFlowStatement {
 
   private getCurrentBlock() {
     return this.conditionalBlocksStack[0];
+  }
+
+  private isInfiniteLoop() {
+    return (
+      this.transitionChangesCounter >
+      ControlFlowStatement.INFINITE_LOOP_THRESHOLD
+    );
   }
 }

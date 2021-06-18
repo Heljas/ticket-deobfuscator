@@ -4,7 +4,7 @@ import { ControlFlowStatement } from './ControlFlowStatement';
 
 export class Transition {
   public expression: NodePath<Expression> | null = null;
-  private isReturnStatement: boolean;
+  public isReturnStatement: boolean;
 
   constructor(
     private readonly controlFlowStatement: ControlFlowStatement,
@@ -40,6 +40,6 @@ export class Transition {
   }
 
   public toString() {
-    return `[Transition] Path: ${this.path.toString()}`;
+    return `[Transition] ${this.path.toString()}`;
   }
 }

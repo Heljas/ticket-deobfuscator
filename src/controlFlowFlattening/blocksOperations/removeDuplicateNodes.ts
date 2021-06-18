@@ -1,16 +1,25 @@
-import * as t from "@babel/types";
-import { ObfuscatedBlock } from "../obfuscatedBlock";
+import * as t from '@babel/types';
+import { ObfuscatedBlock } from '../obfuscatedBlock';
 
-export function removeDuplicateNodes(this: ObfuscatedBlock, node: t.IfStatement) {
+export function removeDuplicateNodes(
+  this: ObfuscatedBlock,
+  node: t.IfStatement,
+) {
   if (!node.alternate || !t.isBlockStatement(node.alternate)) return;
-  if (node.alternate.body.length === 0 || !t.isBlockStatement(node.consequent)) return;
+  if (node.alternate.body.length === 0 || !t.isBlockStatement(node.consequent))
+    return;
 
   const reversedAlternate = [...node.alternate.body].reverse();
   const reversedConsequent = [...node.consequent.body].reverse();
   const duplicateNodes: t.Statement[] = [];
 
-  for (let i = 0; i < reversedAlternate.length && i < reversedConsequent.length; i++) {
-    if (!t.isNodesEquivalent(reversedAlternate[i], reversedConsequent[i])) break;
+  for (
+    let i = 0;
+    i < reversedAlternate.length && i < reversedConsequent.length;
+    i++
+  ) {
+    if (!t.isNodesEquivalent(reversedAlternate[i], reversedConsequent[i]))
+      break;
     duplicateNodes.push(reversedAlternate[i]);
   }
 
