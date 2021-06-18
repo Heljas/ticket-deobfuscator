@@ -9,7 +9,7 @@ import { utils } from './common/utils';
 import { unmaskVariables } from './unmaskVariables/unmaskVariables';
 import { removeReassignments } from './removeReassignments/removeReassignments';
 import { cleanUp } from './cleanup/cleanup';
-import { controlFlowFlattening } from './controlFlowFlatteningRework/controlFlowFlattening';
+import { controlFlowFlattening } from './controlFlowFlatteningRefactor/controlFlowFlattening';
 
 (async () => {
   const [executionContextFilename, targetFilename] = process.argv.slice(2);

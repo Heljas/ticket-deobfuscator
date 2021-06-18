@@ -36,8 +36,8 @@ export const getControlFlowConfig = (
   return {
     switchStatement: firstStatement,
     discriminant,
-    startTransition: initialValue,
-    endTransition: endValue,
+    startExpression: initialValue,
+    endExpression: endValue,
   };
 };
 
