@@ -21,6 +21,7 @@ export class ControlFlowStatement {
   private set currentTransition(transition: Transition) {
     this._currentTransition = transition;
     this.transitionChangesCounter++;
+    // console.log(transition.toString());
   }
   private get currentTransition() {
     return this._currentTransition;
@@ -80,7 +81,7 @@ export class ControlFlowStatement {
         this.currentTransition = transition;
       }
     }
-
+    console.log(this.nodes.length);
     return this.nodes;
   }
 
@@ -104,7 +105,6 @@ export class ControlFlowStatement {
     if (!block) {
       return false;
     }
-
     block.markAsLoop();
     return true;
   }

@@ -68,7 +68,7 @@ export class ConditionalBlock {
 
   private buildLoop() {
     const block = blockStatement(this.consequentNodes);
-    return [whileStatement(this.condition.node, block)];
+    return [whileStatement(this.condition.node, block), ...this.alternateNodes];
   }
 
   private buildIfStatement() {
