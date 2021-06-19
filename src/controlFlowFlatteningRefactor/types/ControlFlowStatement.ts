@@ -81,7 +81,6 @@ export class ControlFlowStatement {
         this.currentTransition = transition;
       }
     }
-    console.log(this.nodes.length);
     return this.nodes;
   }
 

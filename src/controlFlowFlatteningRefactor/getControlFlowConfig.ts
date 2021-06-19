@@ -27,11 +27,21 @@ export const getControlFlowConfig = (
   const endExpression = getEndExpression(discriminant, test);
   if (!endExpression || !endExpression.isExpression()) return null;
 
+  //* Handle for(; 2 !== 1; ) without state holder
+  if (discriminant.isNumericLiteral()) {
+    return {
+      switchStatement: firstStatement,
+      startExpression: discriminant,
+      endExpression,
+    };
+  }
+
   const stateHolderInitializer = getPrevSibling(path);
   const startExpression = getStartExpression(
     discriminant,
     stateHolderInitializer,
   );
+
   if (!startExpression || !startExpression.isExpression()) return null;
 
   return {
@@ -54,7 +64,6 @@ const getStartExpression = (
   }
 
   if (sibling.isExpressionStatement()) {
-    console.log(sibling.toString());
     const expression = sibling.get('expression');
     if (!expression.isAssignmentExpression()) return null;
     const left = expression.get('left');
