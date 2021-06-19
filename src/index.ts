@@ -37,13 +37,13 @@ import { controlFlowFlattening } from './controlFlowFlatteningRefactor/controlFl
     inlineGlobalConstants,
     inlineBlockConstants, //Inline variables used to index masked variables
     controlFlowFlattening,
-    // unmaskVariables,
+    unmaskVariables,
     // removeControlFlowFlattening,
-    // removeReassignments,
-    // inlineBlockConstants,
-    // decryptStrings,
-    // inlineBlockConstants, //Inline again after strigs are decoded
-    // cleanUp,
+    removeReassignments,
+    inlineBlockConstants,
+    decryptStrings,
+    inlineBlockConstants, //Inline again after strigs are decoded
+    cleanUp,
   );
 
   console.log(globalState.errors);

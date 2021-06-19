@@ -56,7 +56,15 @@ function handler(
     REPLACE_WITH_LITERALS,
   );
   if (state.unexpectedError) return;
-  state.variables.forEach((v) => v.declaration.remove());
+  state.variables.forEach((v) => {
+    try {
+      v.declarator.remove();
+    } catch (ex) {
+      console.log(v.declarator.removed);
+      console.log(v.name + ' ' + v.value);
+      console.log(ex.toString());
+    }
+  });
 }
 
 export const INLINE_CONSTANS_ENTRY_POINT: Visitor<GlobalState> = {

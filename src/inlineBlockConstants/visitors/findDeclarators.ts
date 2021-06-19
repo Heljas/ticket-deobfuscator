@@ -30,20 +30,26 @@ export const FIND_DECLARATORS: Visitor<InlineConstantsState> = {
     const binding = state.constantBindings.find((b) => b === name);
     if (!binding) return;
     const initPath = path.get('init');
-    if (isUnaryExpression(initPath.node, { operator: '-' })) {
-      const argument = initPath.get('argument');
-      if (!isNumericLiteral(argument)) return;
-    }
-    try {
-      const value = isStringLiteral(init)
-        ? init.value
-        : eval(initPath.toString());
+    state.variables.push({
+      name,
+      value: initPath,
+      declarator: path,
+    });
 
-      if (!path.parentPath.isVariableDeclaration()) return;
-      state.variables.push({ name, value, declaration: path.parentPath });
-    } catch {
-      state.global.errors.push('[findDeclarators.ts] Unexpected error!');
-      state.unexpectedError = true;
-    }
+    // if (isUnaryExpression(initPath.node, { operator: '-' })) {
+    //   const argument = initPath.get('argument');
+    //   if (!isNumericLiteral(argument)) return;
+    // }
+    // try {
+    //   const value = isStringLiteral(init)
+    //     ? init.value
+    //     : eval(initPath.toString());
+
+    //   if (!path.parentPath.isVariableDeclaration()) return;
+    //   state.variables.push({ name, value, declaration: path.parentPath });
+    // } catch {
+    //   state.global.errors.push('[findDeclarators.ts] Unexpected error!');
+    //   state.unexpectedError = true;
+    // }
   },
 };
