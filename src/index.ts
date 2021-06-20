@@ -10,6 +10,7 @@ import { unmaskVariables } from './unmaskVariables/unmaskVariables';
 import { removeReassignments } from './removeReassignments/removeReassignments';
 import { cleanUp } from './cleanup/cleanup';
 import { controlFlowFlattening } from './controlFlowFlatteningRefactor/controlFlowFlattening';
+import { decryptStringArrays } from './decryptStringArrays/decryptStringArrays';
 
 (async () => {
   const [executionContextFilename, targetFilename] = process.argv.slice(2);
@@ -37,9 +38,10 @@ import { controlFlowFlattening } from './controlFlowFlatteningRefactor/controlFl
     inlineGlobalConstants,
     inlineBlockConstants, //Inline variables used to index masked variables
     controlFlowFlattening,
+    decryptStringArrays,
     unmaskVariables,
-    // removeControlFlowFlattening,
-    removeReassignments,
+    // // removeControlFlowFlattening,
+    // removeReassignments,
     inlineBlockConstants,
     decryptStrings,
     inlineBlockConstants, //Inline again after strigs are decoded
