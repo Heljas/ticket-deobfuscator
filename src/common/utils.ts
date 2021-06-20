@@ -14,12 +14,15 @@ import { DeobfuscatorStep } from './types/DeobfuscatorStep';
 import { GlobalState } from './types/GlobalState';
 
 export const utils = {
-  loadAstFromFile: async (filepath: string) => {
+  astFromFile: async (filepath: string) => {
     const code = await fs.promises.readFile(filepath, {
       encoding: 'utf-8',
     });
     const ast = parser.parse(code);
     return ast;
+  },
+  astFromString: (code: string) => {
+    return parser.parse(code);
   },
   runVisitors: <T>(
     ast: Node | Node[],

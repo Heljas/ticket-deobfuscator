@@ -7,7 +7,7 @@ import { utils } from '../common/utils';
 import { StringsEncryptFunction } from './types/StringsEncryptFunction';
 
 export const analyseExecutionContext = async (filepath: string) => {
-  const ast = await utils.loadAstFromFile(filepath);
+  const ast = await utils.astFromFile(filepath);
 
   const initialState: ExecutionContextState = {
     globalMemberExpressionsPrimitives: new Set<PrimitiveMemberExpression>(),

@@ -11,8 +11,11 @@ import { removeReassignments } from './removeReassignments/removeReassignments';
 import { cleanUp } from './cleanup/cleanup';
 import { controlFlowFlattening } from './controlFlowFlatteningRefactor/controlFlowFlattening';
 import { decryptStringArrays } from './decryptStringArrays/decryptStringArrays';
+import { EvalDecoder } from './restoreEvalsContents/types/EvalDecoder';
+import { restoreEvalsContents } from './restoreEvalsContents/restoreEvalsContents';
 
 (async () => {
+  const start = Date.now();
   const [executionContextFilename, targetFilename] = process.argv.slice(2);
 
   const executionContext = await analyseExecutionContext(
@@ -27,31 +30,29 @@ import { decryptStringArrays } from './decryptStringArrays/decryptStringArrays';
     errors: [],
   };
 
-  const sourceAST = await utils.loadAstFromFile(
-    `fixtures/${targetFilename}.js`,
-  );
+  const sourceAST = await utils.astFromFile(`fixtures/${targetFilename}.js`);
 
   const deofbuscatedAST = utils.run(
     sourceAST,
     globalState,
     //* Steps *
+    restoreEvalsContents,
     inlineGlobalConstants,
     inlineBlockConstants, //Inline variables used to index masked variables
     controlFlowFlattening,
-    decryptStringArrays,
-    unmaskVariables,
-    // // removeControlFlowFlattening,
-    // removeReassignments,
-    inlineBlockConstants,
-    decryptStrings,
-    inlineBlockConstants, //Inline again after strigs are decoded
-    cleanUp,
+    // decryptStringArrays,
+    // unmaskVariables,
+    // // // // removeControlFlowFlattening,
+    // // // removeReassignments,
+    // inlineBlockConstants,
+    // decryptStrings,
+    // inlineBlockConstants, //Inline again after strigs are decoded
+    // cleanUp,
   );
-
-  console.log(globalState.errors);
 
   await utils.generateOutput(deofbuscatedAST, targetFilename);
   evaluator.stop();
+  console.log(`Finished in ${Date.now() - start}ms`);
 })();
 
 /*
