@@ -41,7 +41,7 @@ import { restoreEvalsContents } from './restoreEvalsContents/restoreEvalsContent
     inlineBlockConstants, //Inline variables used to index masked variables
     controlFlowFlattening,
     // decryptStringArrays,
-    // unmaskVariables,
+    unmaskVariables,
     // // // // removeControlFlowFlattening,
     // // // removeReassignments,
     // inlineBlockConstants,

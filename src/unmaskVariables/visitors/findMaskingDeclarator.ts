@@ -7,16 +7,16 @@ export const FIND_MASKING_DECLARATOR: Visitor<VariablesMaskingState> = {
     path: NodePath<VariableDeclarator>,
     state: VariablesMaskingState,
   ) {
-    const scopeUid = path.getFunctionParent()?.node.start;
-    if (scopeUid !== state.scopeUid) return;
-    if (state.maskingDeclarator && state.declaratorName) return;
-    const init = path.get('init') as NodePath;
+    const functionParent = path.getFunctionParent();
+    if (functionParent !== state.parent) return;
+    if (state.argumentsDeclarator && state.arrayName) return;
+    const init = path.get('init');
     if (!init.isArrayExpression() || init.node.elements.length !== 1) return;
     const [arrayIdentifier] = init.node.elements;
     if (!isIdentifier(arrayIdentifier, { name: 'arguments' })) return;
-    const declaratorIdentifier = path.get('id') as NodePath;
+    const declaratorIdentifier = path.get('id');
     if (!declaratorIdentifier.isIdentifier()) return;
-    state.maskingDeclarator = path;
-    state.declaratorName = declaratorIdentifier.node.name;
+    state.argumentsDeclarator = path;
+    state.arrayName = declaratorIdentifier.node.name;
   },
 };
