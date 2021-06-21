@@ -7,7 +7,6 @@ import { inlineGlobalConstants } from './inlineGlobalConstants/inlineGlobalConst
 import { decryptStrings } from './decryptStrings/decryptStrings';
 import { utils } from './common/utils';
 import { unmaskVariables } from './unmaskVariables/unmaskVariables';
-import { removeReassignments } from './removeReassignments/removeReassignments';
 import { cleanUp } from './cleanup/cleanup';
 import { controlFlowFlattening } from './controlFlowFlatteningRefactor/controlFlowFlattening';
 import { decryptStringArrays } from './decryptStringArrays/decryptStringArrays';
@@ -43,9 +42,8 @@ import { restoreEvalsContents } from './restoreEvalsContents/restoreEvalsContent
     // decryptStringArrays,
     unmaskVariables,
     // // // // removeControlFlowFlattening,
-    // // // removeReassignments,
-    // inlineBlockConstants,
-    // decryptStrings,
+    inlineBlockConstants,
+    decryptStrings,
     // inlineBlockConstants, //Inline again after strigs are decoded
     // cleanUp,
   );

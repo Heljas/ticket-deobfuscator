@@ -31,7 +31,6 @@ function handler(path: NodePath) {
 
 export const REPLACE_UNARY_AND_BINARY: Visitor = {
   BinaryExpression: function (path: NodePath<BinaryExpression>) {
-    if (!isBinaryExpression(path.node)) return;
     if (isUnaryExpression(path.node.left, { operator: 'typeof' })) return;
     if (isMemberExpression(path.node.left)) return;
     handler(path);
