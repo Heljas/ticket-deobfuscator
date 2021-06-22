@@ -20,6 +20,15 @@ export const REPLACE_REFERENCES: Visitor<GlobalState> = {
       const init = bindingPath.get('init');
       if (!init.isLiteral()) continue;
       binding.referencePaths.forEach((ref) => {
+        //* Convert 5.toString() calls to "5".toString()
+        if (
+          ref.parentPath.isMemberExpression() &&
+          init.isNumericLiteral() &&
+          ref.key === 'object'
+        ) {
+          ref.replaceWith(stringLiteral(init.node.value.toString()));
+          return;
+        }
         ref.replaceWith(init);
       });
       bindingPath.remove();
