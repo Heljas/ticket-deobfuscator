@@ -16,6 +16,13 @@ export const getMergeableBindings = (
     const mergableViolations: NodePath<AssignmentExpression>[] = [];
     let lastLiteral: NodePath<Literal> | null = null;
 
+    if (binding.path.isVariableDeclarator()) {
+      const initial = binding.path.get('init');
+      if (initial.isLiteral()) {
+        lastLiteral = initial;
+      }
+    }
+
     for (const violation of binding.constantViolations) {
       if (!violation.isAssignmentExpression()) break;
       if (!operators.includes(violation.node.operator)) break;

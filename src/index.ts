@@ -4,7 +4,7 @@ import { analyseExecutionContext } from './analyseExecutionContext/analyseExecut
 import { GlobalState } from './common/types/GlobalState';
 import { inlineBlockConstants } from './inlineBlockConstants/inlineBlockConstants';
 import { inlineGlobalConstants } from './inlineGlobalConstants/inlineGlobalConstants';
-import { decryptStrings } from './decryptStrings/decryptStrings';
+import { decryptStrings } from './restoreStrings/restoreStrings';
 import { utils } from './common/utils';
 import { unmaskVariables } from './unmaskVariables/unmaskVariables';
 import { cleanUp } from './cleanup/cleanup';
@@ -31,6 +31,7 @@ import { restoreEvalsContents } from './restoreEvalsContents/restoreEvalsContent
 
   const sourceAST = await utils.astFromFile(`fixtures/${targetFilename}.js`);
 
+  console.log('started parsing');
   const deofbuscatedAST = utils.run(
     sourceAST,
     globalState,
@@ -43,9 +44,9 @@ import { restoreEvalsContents } from './restoreEvalsContents/restoreEvalsContent
     unmaskVariables,
     // // // // // removeControlFlowFlattening,
     inlineBlockConstants,
-    // decryptStrings,
-    // inlineBlockConstants, //Inline again after strigs are decoded
-    // cleanUp,
+    decryptStrings,
+    inlineBlockConstants, //Inline again after strigs are decoded
+    cleanUp,
   );
 
   await utils.generateOutput(deofbuscatedAST, targetFilename);

@@ -3,7 +3,7 @@ import { GlobalState } from '../common/types/GlobalState';
 import { REPLACE_UNARY_AND_BINARY } from './visitors/replaceUnaryAndBinary';
 import { utils } from '../common/utils';
 import { EVALUATE_ENCRYPT_FUNCTIONS } from './visitors/evaluateEncryptFunctions';
-import { MERGE_STRING_PARTS } from './visitors/mergeStringsParts';
+import { JOIN_STRINGS } from './visitors/joinStrings';
 
 export const decryptStrings = (ast: File, globalState: GlobalState) => {
   utils.runVisitors(
@@ -11,7 +11,7 @@ export const decryptStrings = (ast: File, globalState: GlobalState) => {
     globalState,
     REPLACE_UNARY_AND_BINARY,
     EVALUATE_ENCRYPT_FUNCTIONS,
-    MERGE_STRING_PARTS,
+    JOIN_STRINGS,
   );
   return utils.regenerate(ast);
 };
