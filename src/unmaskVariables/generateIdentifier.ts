@@ -2,7 +2,8 @@ import { Scope } from '@babel/traverse';
 
 const getRandomString = (): string => {
   const length = Math.floor(Math.random() * 3) + 3;
-  const randomString = Math.random().toString(36).replace(/\d/g, '').substr(2, length) || 'x';
+  const randomString =
+    Math.random().toString(36).replace(/\d/g, '').substr(2, length) || 'x';
   if (isValidIdentifier(randomString)) return randomString;
   return getRandomString();
 };

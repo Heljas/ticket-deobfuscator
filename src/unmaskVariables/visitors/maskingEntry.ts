@@ -5,6 +5,7 @@ import {
   variableDeclarator,
   variableDeclaration,
   FunctionParent,
+  MemberExpression,
 } from '@babel/types';
 import { GlobalState } from '../../common/types/GlobalState';
 import { utils } from '../../common/utils';
@@ -51,13 +52,14 @@ export const MASKING_ENTRY: Visitor<GlobalState> = {
     if (!state.argumentsDeclarator) return;
 
     state.variables.forEach((variable) => {
-      const [initialPath] = variable.paths;
-      const isScopeConstant = variable.paths.every(
-        (p) => p.scope === initialPath.scope,
+      const [firstReference] = variable.references;
+
+      const isParentScopeConstant = variable.references.every((ref) =>
+        ref.find((p) => p.scope === firstReference.scope),
       );
 
-      const positionStatement = (isScopeConstant
-        ? initialPath
+      const positionStatement = (isParentScopeConstant
+        ? firstReference
         : state.argumentsDeclarator
       )?.getStatementParent();
 
@@ -67,12 +69,20 @@ export const MASKING_ENTRY: Visitor<GlobalState> = {
         );
       }
 
+      const initialValue = isParentScopeConstant
+        ? getInitialValue(firstReference)
+        : null;
       const id = identifier(variable.name);
-      const declarator = variableDeclarator(id);
+      const declarator = variableDeclarator(id, initialValue);
       const declaration = variableDeclaration('var', [declarator]);
-      positionStatement.insertBefore(declaration);
 
-      variable.paths.forEach((p) => {
+      if (isParentScopeConstant && initialValue) {
+        positionStatement.replaceWith(declaration);
+      } else {
+        positionStatement.insertBefore(declaration);
+      }
+
+      variable.references.forEach((p) => {
         p.replaceWith(identifier(variable.name));
       });
     });
@@ -91,4 +101,17 @@ export const MASKING_ENTRY: Visitor<GlobalState> = {
     if (state.detectedErrors) return;
     state.argumentsDeclarator.remove();
   },
+};
+
+const getInitialValue = (path: NodePath<MemberExpression>) => {
+  const statementParent = path.getStatementParent();
+  if (!statementParent?.isExpressionStatement()) return null;
+  const expression = statementParent.get('expression');
+  if (
+    !expression.isAssignmentExpression({ operator: '=' }) ||
+    path.key !== 'left'
+  )
+    return null;
+
+  return expression.get('right').node;
 };

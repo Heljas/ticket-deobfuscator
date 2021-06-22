@@ -1,10 +1,5 @@
-import { NodePath, Scope, Visitor } from '@babel/traverse';
-import {
-  identifier,
-  MemberExpression,
-  variableDeclaration,
-  variableDeclarator,
-} from '@babel/types';
+import { NodePath, Visitor } from '@babel/traverse';
+import { MemberExpression } from '@babel/types';
 import { getMaskedVariableIndex } from '../getMaskedVariableIndex';
 import { generateIdentifier } from '../generateIdentifier';
 import { VariablesMaskingState } from '../types/VariablesMaskingState';
@@ -21,7 +16,7 @@ export const FIND_MASKED_VARIABLES: Visitor<VariablesMaskingState> = {
 
     const maskedVariable = state.variables.find((m) => m.index === index);
     if (maskedVariable) {
-      maskedVariable.paths.push(path);
+      maskedVariable.references.push(path);
       return;
     }
 
@@ -29,7 +24,7 @@ export const FIND_MASKED_VARIABLES: Visitor<VariablesMaskingState> = {
     state.variables.push({
       name,
       index,
-      paths: [path],
+      references: [path],
     });
   },
 };

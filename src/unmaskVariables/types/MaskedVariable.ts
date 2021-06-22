@@ -4,5 +4,5 @@ import { MemberExpression } from '@babel/types';
 export interface MaskedVariable {
   name: string;
   index: number;
-  paths: NodePath<MemberExpression>[];
+  references: NodePath<MemberExpression>[];
 }

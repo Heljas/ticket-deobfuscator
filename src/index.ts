@@ -35,14 +35,14 @@ import { restoreEvalsContents } from './restoreEvalsContents/restoreEvalsContent
     sourceAST,
     globalState,
     //* Steps *
-    // restoreEvalsContents,
-    // inlineGlobalConstants,
+    restoreEvalsContents,
+    inlineGlobalConstants,
     inlineBlockConstants, //Inline variables used to index masked variables
-    // controlFlowFlattening,
+    controlFlowFlattening,
     // // decryptStringArrays,
-    // unmaskVariables,
+    unmaskVariables,
     // // // // // removeControlFlowFlattening,
-    // inlineBlockConstants,
+    inlineBlockConstants,
     // decryptStrings,
     // inlineBlockConstants, //Inline again after strigs are decoded
     // cleanUp,
