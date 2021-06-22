@@ -43,7 +43,7 @@ import { restoreEvalsContents } from './restoreEvalsContents/restoreEvalsContent
     unmaskVariables,
     // // // // removeControlFlowFlattening,
     inlineBlockConstants,
-    decryptStrings,
+    // decryptStrings,
     // inlineBlockConstants, //Inline again after strigs are decoded
     // cleanUp,
   );

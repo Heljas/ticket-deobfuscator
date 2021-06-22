@@ -2,7 +2,7 @@ import { NodePath, Visitor } from '@babel/traverse';
 import { Scopable } from '@babel/types';
 import { getMergeableBindings } from '../../common/utils/getMergableBindings';
 
-export const REMOVE_REASSIGNMENTS: Visitor = {
+export const MERGE_REASSIGNMENTS: Visitor = {
   Scopable: function (path: NodePath<Scopable>) {
     if (path.parentPath?.isFunctionParent()) return;
 

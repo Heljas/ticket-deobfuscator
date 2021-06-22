@@ -1,5 +1,5 @@
 import { Binding, NodePath } from '@babel/traverse';
-import { AssignmentExpression, Literal } from '@babel/types';
+import { AssignmentExpression, isNodesEquivalent, Literal } from '@babel/types';
 import { MergableBinding } from '../types/MergableBinding';
 
 export const getMergeableBindings = (
@@ -17,6 +17,18 @@ export const getMergeableBindings = (
     let lastLiteral: NodePath<Literal> | null = null;
 
     for (const violation of binding.constantViolations) {
+      if (!violation.isAssignmentExpression()) break;
+      if (!operators.includes(violation.node.operator)) break;
+
+      const value = violation.get('right');
+      if (!value.isLiteral()) break;
+
+      if (lastLiteral && isNodesEquivalent(lastLiteral.node, value.node)) {
+        mergableViolations.push(violation);
+        lastLiteral = value;
+        continue;
+      }
+
       if (
         !violation.node.start ||
         violation.node.start >= firstReferencePosition
@@ -24,11 +36,7 @@ export const getMergeableBindings = (
         break;
 
       if (violation.scope !== binding.path.scope) break;
-      if (!violation.isAssignmentExpression()) break;
-      if (!operators.includes(violation.node.operator)) break;
 
-      const value = violation.get('right');
-      if (!value.isLiteral()) break;
       mergableViolations.push(violation);
       lastLiteral = value;
     }

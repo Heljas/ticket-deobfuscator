@@ -1,9 +1,13 @@
 import { File } from '@babel/types';
 import { GlobalState } from '../common/types/GlobalState';
 import { utils } from '../common/utils';
-import { INLINE_CONSTANS_ENTRY_POINT } from './visitors/inlineConstantsEntryPoint';
+import { MERGE_REASSIGNMENTS } from './visitors/mergeReassignments';
+import { REPLACE_REFERENCES } from './visitors/replaceReferences';
 
 export const inlineBlockConstants = (ast: File, globalState: GlobalState) => {
-  utils.runVisitors(ast, globalState, INLINE_CONSTANS_ENTRY_POINT);
+  ast = utils.regenerate(ast);
+  utils.runVisitors(ast, globalState, MERGE_REASSIGNMENTS);
+  ast = utils.regenerate(ast);
+  utils.runVisitors(ast, globalState, REPLACE_REFERENCES);
   return ast;
 };
